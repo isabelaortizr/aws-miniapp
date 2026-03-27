@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini App AWS</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <div class="card">
+      <h1>Mini App para AWS</h1>
+      <p>Frontend + Backend conectados.</p>
+
+      <button id="loadMessageBtn">Probar backend</button>
+      <p id="backendMessage" class="result"></p>
+
+      <hr />
+
+      <h2>Formulario demo</h2>
+      <form id="contactForm">
+        <input type="text" id="name" placeholder="Tu nombre" required />
+        <textarea id="message" placeholder="Tu mensaje" required></textarea>
+        <button type="submit">Enviar</button>
+      </form>
+
+      <p id="formResponse" class="result"></p>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
