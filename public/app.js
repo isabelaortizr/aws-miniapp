@@ -1,36 +1,69 @@
-const loadMessageBtn = document.getElementById("loadMessageBtn");
-const backendMessage = document.getElementById("backendMessage");
-const contactForm = document.getElementById("contactForm");
+const requestForm = document.getElementById("requestForm");
 const formResponse = document.getElementById("formResponse");
+const requestsList = document.getElementById("requestsList");
+const loadRequestsBtn = document.getElementById("loadRequestsBtn");
 
-loadMessageBtn.addEventListener("click", async () => {
+async function loadRequests() {
+  requestsList.innerHTML = "<p>Cargando solicitudes...</p>";
+
   try {
-    const response = await fetch("/api/message");
-    const data = await response.json();
-    backendMessage.textContent = data.message;
-  } catch (error) {
-    backendMessage.textContent = "Error al conectar con el backend";
-  }
-});
+    const response = await fetch("/api/requests");
+    const result = await response.json();
 
-contactForm.addEventListener("submit", async (e) => {
+    if (!result.success || !result.data.length) {
+      requestsList.innerHTML = "<p>No hay solicitudes registradas.</p>";
+      return;
+    }
+
+    requestsList.innerHTML = result.data
+      .map(
+        (request) => `
+          <div class="request-item">
+            <h3>${request.subject}</h3>
+            <p><strong>ID:</strong> ${request.id}</p>
+            <p><strong>Área:</strong> ${request.area}</p>
+            <p><strong>Solicitante:</strong> ${request.applicant}</p>
+            <span class="status">${request.status}</span>
+          </div>
+        `
+      )
+      .join("");
+  } catch (error) {
+    requestsList.innerHTML = "<p>Error al cargar las solicitudes.</p>";
+  }
+}
+
+requestForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = document.getElementById("name").value;
-  const message = document.getElementById("message").value;
+  const area = document.getElementById("area").value;
+  const subject = document.getElementById("subject").value;
+  const applicant = document.getElementById("applicant").value;
 
   try {
-    const response = await fetch("/api/contact", {
+    const response = await fetch("/api/requests", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ name, message })
+      body: JSON.stringify({ area, subject, applicant })
     });
 
-    const data = await response.json();
-    formResponse.textContent = data.message;
+    const result = await response.json();
+
+    if (!result.success) {
+      formResponse.textContent = result.message;
+      return;
+    }
+
+    formResponse.textContent = result.message;
+    requestForm.reset();
+    loadRequests();
   } catch (error) {
-    formResponse.textContent = "Error al enviar el formulario";
+    formResponse.textContent = "Error al registrar la solicitud.";
   }
 });
+
+loadRequestsBtn.addEventListener("click", loadRequests);
+
+loadRequests();
