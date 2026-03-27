@@ -2,59 +2,28 @@ const express = require("express");
 const path = require("path");
 
 const app = express();
-const PORT = 80;
+const PORT = 4000;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-let requests = [
-  {
-    id: 1,
-    area: "Recursos Humanos",
-    subject: "Solicitud de vacaciones",
-    applicant: "Isabela Ortiz",
-    status: "Pendiente"
-  },
-  {
-    id: 2,
-    area: "Sistemas",
-    subject: "Soporte de acceso a plataforma",
-    applicant: "Carlos Mendoza",
-    status: "En proceso"
-  }
-];
-
-app.get("/api/requests", (req, res) => {
-  res.json({
-    success: true,
-    data: requests
-  });
+app.get("/api/message", (req, res) => {
+  res.json({ success: true, message: "Hola desde AWS 🚀" });
 });
 
-app.post("/api/requests", (req, res) => {
-  const { area, subject, applicant } = req.body;
+app.post("/api/contact", (req, res) => {
+  const { name, message } = req.body;
 
-  if (!area || !subject || !applicant) {
+  if (!name || !message) {
     return res.status(400).json({
       success: false,
-      message: "Todos los campos son obligatorios"
+      message: "Nombre y mensaje son obligatorios"
     });
   }
 
-  const newRequest = {
-    id: requests.length + 1,
-    area,
-    subject,
-    applicant,
-    status: "Pendiente"
-  };
-
-  requests.push(newRequest);
-
-  res.status(201).json({
+  res.json({
     success: true,
-    message: "Solicitud registrada correctamente",
-    data: newRequest
+    message: `Gracias ${name}, tu mensaje fue recibido correctamente`
   });
 });
 
